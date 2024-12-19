@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Description and Resumes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            padding: 0;
+            background-color: #f4f4f9;
+        }
+        h1 {
+            text-align: center;
+        }
+        .form-container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            resize: vertical;
+        }
+        button {
+            display: inline-block;
+            margin-top: 10px;
+            padding: 10px 15px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <h1>Submit Job Description and Resumes</h1>
+    <div class="form-container">
+        <form id="jobForm" action="/save_jd" method="POST">
+            <label for="jobDescription">Job Description:</label>
+            <textarea id="jobDescription" name="jobDescription" placeholder="Enter job description here..." required></textarea>
+
+            <!-- <div id="resumesContainer">
+                <label for="resume1">Resume 1:</label>
+                <textarea id="resume1" name="resumes[]" placeholder="Enter resume details here..." required></textarea>
+            </div> -->
+
+            <!-- <button type="button" id="addMoreResume">Add More Resume</button> -->
+            <br>
+            <button type="submit">Submit</button>
+            <a href="http://127.0.0.1:8000/resumeSubmit">Click me</a>
+        </form>
+    <!-- <a href="file:///home/piyush/Documents/dbda/project/ml/Resume_Screening_System/src/templates/resumeSubmit.html">
+        <button>Click me</button>
+    </a> -->
+
+    
+    <script>
+        const addMoreResumeButton = document.getElementById('addMoreResume');
+        const resumesContainer = document.getElementById('resumesContainer');
+        let resumeCount = 1;
+
+        addMoreResumeButton.addEventListener('click', () => {
+            resumeCount++;
+
+            const label = document.createElement('label');
+            label.setAttribute('for', `resume${resumeCount}`);
+            label.textContent = `Resume ${resumeCount}:`;
+
+            const textarea = document.createElement('textarea');
+            textarea.id = `resume${resumeCount}`;
+            textarea.name = 'resumes[]';
+            textarea.placeholder = 'Enter resume details here...';
+            textarea.required = true;
+
+            resumesContainer.appendChild(label);
+            resumesContainer.appendChild(textarea);
+        });
+
+        document.getElementById('jobForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+
+            const data = {
+                jobDescription: formData.get('jobDescription'),
+                resumes: formData.getAll('resumes[]'),
+            };
+
+            console.log('Form data submitted:', data);
+            alert('Form submitted successfully! Check the console for details.');
+        });
+    </script>
+</body>
+</html>
+

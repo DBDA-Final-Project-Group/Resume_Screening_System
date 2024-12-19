@@ -17,7 +17,7 @@ def get_gemini_repsonse(input):
     response=model.generate_content(input)
     return response.text
 
-directory = '/home/sunbeanm/Documents/dbda/project/ml/resumes_samples/'
+directory = '/home/piyush/Documents/dbda/project/ml/resumes_samples/'
 
 count = 0
 for filename in os.listdir(directory):
@@ -34,14 +34,14 @@ for filename in os.listdir(directory):
                 input_prompt = f"""
                     I will provide you with the text content of a resume. Your task is to extract the following important details from it:
                     Skills, Total Experience, College Name, Degree, Designation, Company Names
-                    Please return the extracted information in a key-value format.
+                    Please return the extracted information, remove duplicate skills but keep important information.
                     Resume Text: {text}"""
                 response = get_gemini_repsonse(input_prompt)
 
                 # new_file_name = filename.replace(".txt",".npy")
 
                 # Define the path to the shortned resume folder
-                dependent_folder = '/home/sunbeanm/Documents/dbda/project/ml/shortned_resumes/'
+                dependent_folder = '/home/piyush/Documents/dbda/project/ml/shortned_resumes/'
 
                 # Create the full path for the new file
                 new_file_path = os.path.join(dependent_folder, filename)
