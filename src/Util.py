@@ -11,7 +11,7 @@ class Util:
     config = configparser.ConfigParser() 
     cwd = Path.cwd()
     project_root = cwd
-    linkedIn_properties_filepath = os.path.join(project_root,"resources","linkedIn.properties")
+    linkedIn_properties_filepath = os.path.join(project_root,"resources","config.properties")
     config.read(linkedIn_properties_filepath)
 
     @classmethod

@@ -49,15 +49,16 @@
 <body>
     <h1>Submit Job Description and Resumes</h1>
     <div class="form-container">
-        <form id="jobForm" action="/save_resume" method="POST">
+        <form id="resumeForm" action="/save_resume" method="POST">
             <div id="resumesContainer">
-                <label for="resume1">Resume 1:</label>
-                <textarea id="resume1" name="resume_text" placeholder="Enter resume details here..." required></textarea>
+                <label for="resumetareaId">Resume 1:</label>
+                <textarea id="resumetareaId" name="resume_text" placeholder="Enter resume details here..." required></textarea>
             </div>
 
             <button type="button" id="addMoreResume">Add More Resume</button>
             <br>
             <button type="submit">Submit</button>
+            <a href="{{url_for('index')}}">Go to Index Page</a>
         </form>
     </div>
 

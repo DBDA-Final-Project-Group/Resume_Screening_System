@@ -6,7 +6,7 @@ from selenium.common.exceptions import StaleElementReferenceException
 config = configparser.ConfigParser()
 project_path = Util.get_project_folder_path()
 print(f"project_path: {project_path}")
-linkedIn_properties_filepath = os.path.join(project_path,"resources","linkedIn.properties")
+linkedIn_properties_filepath = os.path.join(project_path,"resources","config.properties")
 config.read(linkedIn_properties_filepath)
 
 
