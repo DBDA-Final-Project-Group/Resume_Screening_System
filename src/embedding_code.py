@@ -5,7 +5,7 @@ def create_embeddings(directory, output_directory):
     for filename in os.listdir(directory):
         if filename.endswith('.txt'):
             file_path = os.path.join(directory, filename)
-            with open(file_path, 'r', encoding='latin-1') as file:
+            with open(file_path, 'r', encoding='utf-8') as file:
                 text = file.read()
                 embeddings = model.encode(text)
             new_file_name = filename.replace(".txt", ".npy")

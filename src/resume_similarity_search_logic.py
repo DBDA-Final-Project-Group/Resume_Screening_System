@@ -9,22 +9,30 @@ def load_embeddings(file_path):
 def similarity_search():
     results = {}
     orignal_resume_directory = '/home/piyush/Documents/dbda/project/ml/resumes_samples/'
+    dir_contents = os.listdir(orignal_resume_directory)
+    dir_contents.sort()
     resume_paths = []
-    for filename in os.listdir(orignal_resume_directory):
+    for filename in dir_contents:
         file_path = os.path.join(orignal_resume_directory, filename)
         resume_paths.append(file_path)
 
+    resume_paths.sort()
     resume_metadata = {i: resume for i, resume in enumerate(resume_paths)}
     print(resume_metadata)
 
     # Load the resume and job description embeddings (replace with actual file paths)
 
     directory = '/home/piyush/Documents/dbda/project/ml/encodings/resume_encodings/'
+    dir_contents = os.listdir(directory)
+    dir_contents.sort()
     resume_embeddings = []
-    for filename in os.listdir(directory):
+    resume_embeddings_files = []
+    for filename in dir_contents:
         file_path = os.path.join(directory, filename)
+        resume_embeddings_files.append(file_path)
         resume_embeddings.append(load_embeddings(file_path))
 
+    print(resume_embeddings_files)
     resume_embeddings = np.array(resume_embeddings)
 
 
@@ -43,18 +51,27 @@ def similarity_search():
     # Query the Faiss index with the job description embedding
     k = 2 # Number of most similar resumes to return
     distances, indices = index.search(job_description_embedding, k)
-
+    print(f"distances: {distances}, indices{indices}")
     # Output the most similar resumes and their distances
-    print(f"Top {k} most similar resumes to the job description:")
-    for i in range(k):
-        print(f"Resume {indices[0][i]} with distance {distances[0][i]}")
-
+    # print(f"Top {k} most similar resumes to the job description:")
+    # for i in range(k):
+    #     print(f"Resume {indices[0][i]} with distance {distances[0][i]}")
+    #     print(indices)
+    # for idx in indices[0]:
+    #     resume_no = idx
+    #     print(f"Resume no: {resume_no}")
+    #     with open(resume_metadata[idx],"r", encoding='utf-8') as file:
+    #         resume_content = file.read()
+    #         results[str(resume_no)] = resume_content
+    #         print(resume_content)
+    i = 1
     for idx in indices[0]:
-        resume_no = idx-1
-        print(f"Resume no: {resume_no}")
-        with open(resume_metadata[idx],"r", encoding='latin-1') as file:
+        print(f"Most similar resume is at index: {idx}")
+        print(f"Resume metadata: {resume_metadata[idx]}")
+        with open(resume_metadata[idx], "r", encoding='utf-8') as file:
             resume_content = file.read()
-            results[str(resume_no)] = resume_content
-            print(resume_content)
-
+            results[i] = resume_content
+        print(idx, resume_content)
+        i += 1
+    print(results)
     return results

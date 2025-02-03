@@ -5,7 +5,7 @@ from sklearn.cluster import KMeans
 
 # Load the file
 file_path = "/home/sunbeanm/Downloads/normlized_classes.txt"  # Update this with the correct path
-with open(file_path, 'r', encoding='latin-1') as f:
+with open(file_path, 'r', encoding='utf-8') as f:
     job_titles = f.readlines()
 
 # Clean and preprocess job titles
