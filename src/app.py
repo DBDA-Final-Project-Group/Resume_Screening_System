@@ -1,8 +1,11 @@
 from flask import Flask, request, render_template, redirect
 import time
+import process_jd as pjd
 import embedding_code as emb
 import resume_similarity_search_logic as sim
-import reduce_resumes as rr
+# import reduce_resumes as rr
+import kafka_producer as producer
+from src.kafka_consumer_resume import process_resume
 
 app = Flask(__name__)
 count = 0
@@ -17,33 +20,37 @@ def resume_page():
 @app.route('/save_jd', methods=['POST'])
 def predict():
     save_jd_file()
-    emb.create_embedding_for_jd()
-    results = sim.similarity_search()
+    # emb.create_embedding_for_jd()
+    # results = sim.similarity_search()
+    results = pjd.process_jd()
     html_page = prediction_page(results)
     return html_page
 
 def save_jd_file():
     content = request.form.get('jobDescription')
+    print(content)
     # Get the current timestamp
     timestamp = time.time()
     random_number = int((timestamp * 1000) % 100000)
 
     if content:
-        with open(f"/home/piyush/Documents/dbda/project/ml/jd_collection/jd{random_number}.txt", "w", encoding="utf-8") as file:
-            file.write(content)
-        with open(f"/home/piyush/Documents/dbda/project/ml/jd_sample/jd.txt", "w", encoding="utf-8") as file:
-            file.write(content)
-            print("File saved successfully!")
-        rr.reduce_jd_content()
+        # with open(f"/home/piyush/Documents/dbda/project/ml/jd_collection/jd{random_number}.txt", "w", encoding="utf-8") as file:
+        #     file.write(content)
+        # with open(f"/home/piyush/Documents/dbda/project/ml/jd_sample/jd.txt", "w", encoding="utf-8") as file:
+        #     file.write(content)
+        #     print("File saved successfully!")
+        # rr.reduce_jd_content()
+        producer.send_job_description(content)
         return redirect("/")
     return "No content to save."
 
 @app.route('/save_resume', methods=['POST'])
 def save_and_create_embedding_resume():
     save_resume_file()
-    rr.reduce_resume_content()
-    emb.create_embedding_for_resume()
-    return "Saved Resume, and succesfully created the embedding for it!"
+    process_resume()
+    # rr.reduce_resume_content()
+    # emb.create_embedding_for_resume()
+    return "Saved Resume, in HDFS"
 
 def save_content(content):
     # Get the current timestamp
@@ -52,12 +59,13 @@ def save_content(content):
     random_number = str(int(timestamp))+str(count)
     count += 1
     if content:
-        with open(f"/home/piyush/Documents/dbda/project/ml/temp_resumes/resume{random_number}.txt", "w",
-                  encoding="utf-8") as file:
-            file.write(content)
-        with open(f"/home/piyush/Documents/dbda/project/ml/resumes_samples/resume{random_number}.txt", "w",
-                  encoding="utf-8") as file:
-            file.write(content)
+        # with open(f"/home/piyush/Documents/dbda/project/ml/temp_resumes/resume{random_number}.txt", "w",
+        #           encoding="utf-8") as file:
+        #     file.write(content)
+        # with open(f"/home/piyush/Documents/dbda/project/ml/resumes_samples/resume{random_number}.txt", "w",
+        #           encoding="utf-8") as file:
+        #     file.write(content)
+        producer.send_resume(content, random_number)
         return "File saved successfully!"
     return "No content to save."
 
@@ -134,13 +142,22 @@ def prediction_page(result):
     """
 
     # Add dynamic content
-    for key, value in result.items():
+    # for key, value in result.items():
+    #     html_template += f"""
+    #             <div class="entry">
+    #                 <div class="key">Resume: {key}</div>
+    #                 <div class="value">{value}</div>
+    #             </div>
+    #     """
+    count = 1
+    for resume in result:
         html_template += f"""
                 <div class="entry">
-                    <div class="key">Resume: {key}</div>
-                    <div class="value">{value}</div>
+                    <div class="key">Resume: {count}</div>
+                    <div class="value">{resume}</div>
                 </div>
         """
+        count+=1
 
     # Close the HTML structure
     html_template += """
